@@ -62,5 +62,5 @@ python3 launch.py --use-ipex
 ------
 Setup of WebUI
 Cross-attention layer optimization
-Set - InvokeAI's 
+Set - InvokeAI's  
 
