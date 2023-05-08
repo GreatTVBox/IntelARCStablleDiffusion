@@ -1,0 +1,66 @@
+------ 
+Ubuntu Jammy
+------ 
+sudo apt-get install -y gpg-agent wget
+wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | sudo gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu jammy max' | sudo tee  /etc/apt/sources.list.d/intel.gpu.jammy.list
+sudo apt-get update && sudo apt-get install  -y --install-suggests linux-image-5.15.0-57-generic
+sudo sed -i "s/GRUB_DEFAULT=.*/GRUB_DEFAULT=\"1> $(echo $(($(awk -F\' '/menuentry / {print $2}' /boot/grub/grub.cfg | grep -no '5.15.0-57' | sed 's/:/\n/g' | head -n 1)-2)))\"/" /etc/default/grub
+sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT=\"$(echo $(awk -F'="' '$1  == "GRUB_CMDLINE_LINUX_DEFAULT" {print $2}' /etc/default/grub | tr -d '"') | sed 's/pci=realloc=off//g') pci=realloc=off\"/" /etc/default/grub
+sudo  update-grub
+sudo reboot
+-----
+Ubuntu Jammy 5.15.0-57-generic
+-----
+sudo apt-get update
+sudo apt-get -y install gawk dkms linux-headers-$(uname -r) libc6-dev 
+sudo apt-get install -y intel-platform-vsec-dkms intel-platform-cse-dkms
+sudo apt-get install -y intel-i915-dkms intel-fw-gpu
+sudo apt-get install -y intel-opencl-icd intel-level-zero-gpu level-zero intel-media-va-driver-non-free libmfx1 libmfxgen1 libvpl2 libegl-mesa0 libegl1-mesa libegl1-mesa-dev libgbm1 libgl1-mesa-dev libgl1-mesa-dri libglapi-mesa libgles2-mesa-dev libglx-mesa0 libigdgmm12 libxatracker2 mesa-va-drivers mesa-vdpau-drivers mesa-vulkan-drivers va-driver-all vainfo
+sudo apt-get install -y libigc-dev intel-igc-cm libigdfcl-dev libigfxcmrt-dev level-zero-dev
+sudo reboot
+-----
+Ubuntu Jammy 5.15.0-57-generic
+-----
+stat -c "%G" /dev/dri/render*
+groups ${USER}
+sudo gpasswd -a ${USER} render
+newgrp render
+sudo apt-get install hwinfo
+hwinfo --display
+export DISPLAY=:0.0
+vainfo
+sudo apt-get install clinfo
+clinfo
+sudo reboot
+-----
+Ubuntu Jammy 5.15.0-57-generic
+----- 
+wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | sudo gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+echo 'deb [arch=amd64,i386 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu jammy arc' | sudo tee /etc/apt/sources.list.d/intel.gpu.jammy.list
+wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+echo 'deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main' | sudo tee /etc/apt/sources.list.d/oneAPI.list
+sudo apt update && sudo apt upgrade -y
+sudo apt-get install intel-opencl-icd intel-level-zero-gpu level-zero intel-media-va-driver-non-free libmfx1 libgl-dev intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl python3-pip
+sudo apt install python3.10-venv mc git
+python3 -m pip install --user virtualenv
+echo 'source /opt/intel/oneapi/setvars.sh' >> ~/.bashrc
+git clone https://github.com/vladmandic/automatic
+cd automatic
+wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/89283df8-c667-47b0-b7e1-c4573e37bd3e/2023.1-linux-hotfix.zip
+unzip 2023.1-linux-hotfix.zip
+cd 2023.1-linux-hotfix
+sudo cp libpi_level_zero.so /opt/intel/oneapi/compiler/2023.1.0/linux/lib/libpi_level_zero.so
+sudo chmod +775 /opt/intel/oneapi/compiler/2023.1.0/linux/lib/libpi_level_zero.so
+exit
+-----
+Load new Terminal Emulator
+-----
+cd automatic
+python3 installer,py
+python3 launch.py --use-ipex
+------
+Setup of WebUI
+Cross-attention layer optimization
+Set - InvokeAI's
+
